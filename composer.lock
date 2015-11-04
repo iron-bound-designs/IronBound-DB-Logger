@@ -1,0 +1,127 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
+    ],
+    "hash": "31e58cf1cc6cd3c34b99636a380ab71c",
+    "content-hash": "e60480a34d865fb07f6e5a26893fd349",
+    "packages": [
+        {
+            "name": "ironbound/cache",
+            "version": "v1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/iron-bound-designs/IronBound-Cache.git",
+                "reference": "6f706e7dd0d1cfa1a153dbd6de79e2db99fe0589"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/iron-bound-designs/IronBound-Cache/zipball/6f706e7dd0d1cfa1a153dbd6de79e2db99fe0589",
+                "reference": "6f706e7dd0d1cfa1a153dbd6de79e2db99fe0589",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "IronBound\\Cache\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Iron Bound Designs",
+                    "email": "info@ironbounddesigns.com"
+                }
+            ],
+            "description": "Provides wrappers for WordPress' object cache to make storing and retrieving models easier.",
+            "time": "2015-10-05 05:36:49"
+        },
+        {
+            "name": "ironbound/db",
+            "version": "v1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/iron-bound-designs/IronBound-DB.git",
+                "reference": "c4eeeee21fb8b1185cc23728cbcc913139347c2c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/iron-bound-designs/IronBound-DB/zipball/c4eeeee21fb8b1185cc23728cbcc913139347c2c",
+                "reference": "c4eeeee21fb8b1185cc23728cbcc913139347c2c",
+                "shasum": ""
+            },
+            "require": {
+                "ironbound/cache": "^1.0.0",
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "IronBound\\DB\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Iron Bound Designs",
+                    "email": "info@ironbounddesigns.com"
+                }
+            ],
+            "description": "Provides models and custom query objects for custom database tables in WordPress.",
+            "time": "2015-10-14 02:12:10"
+        },
+        {
+            "name": "psr/log",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/log.git",
+                "reference": "fe0936ee26643249e916849d48e3a51d5f5e278b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/log/zipball/fe0936ee26643249e916849d48e3a51d5f5e278b",
+                "reference": "fe0936ee26643249e916849d48e3a51d5f5e278b",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Psr\\Log\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "http://www.php-fig.org/"
+                }
+            ],
+            "description": "Common interface for logging libraries",
+            "keywords": [
+                "log",
+                "psr",
+                "psr-3"
+            ],
+            "time": "2012-12-21 11:40:51"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": []
+}
