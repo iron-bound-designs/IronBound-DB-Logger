@@ -36,7 +36,8 @@ abstract class AbstractTable implements Table {
 			'user'      => '%d',
 			'ip'        => '%d',
 			'exception' => '%s',
-			'trace'     => '%s'
+			'trace'     => '%s',
+			'context'   => '%s'
 		);
 	}
 
@@ -56,7 +57,8 @@ abstract class AbstractTable implements Table {
 			'user'      => '',
 			'ip'        => '',
 			'exception' => '',
-			'trace'     => ''
+			'trace'     => '',
+			'context'   => ''
 		);
 	}
 
@@ -92,6 +94,7 @@ abstract class AbstractTable implements Table {
 		ip BINARY(16),
 		exception VARCHAR (255),
 		trace LONGTEXT,
+		context LONGTEXT,
 		PRIMARY KEY  (id),
 		KEY lgroup (lgroup),
 		KEY user (user)

@@ -54,6 +54,8 @@ class Logger extends AbstractLogger {
 	 * For example, passing a key `_product_id` in `$context` will save whatever value given in the column
 	 * named `product_id`. If the column does not exist the value will be silently discarded.
 	 *
+	 * The he context array will be recorded as JSON, sans the `exception` if passed and an Exception object.
+	 *
 	 * @param mixed  $level
 	 * @param string $message
 	 * @param array  $context
@@ -77,7 +79,6 @@ class Logger extends AbstractLogger {
 		}
 
 		$message = (string) $message;
-		$message = $this->interpolate( $message, $context );
 
 		if ( isset( $context['exception'] ) && $context['exception'] instanceof \Exception ) {
 
@@ -86,18 +87,21 @@ class Logger extends AbstractLogger {
 
 			$class = get_class( $context['exception'] );
 			$trace = $exception->getTraceAsString();
+
+			unset( $context['exception'] );
 		} else {
 			$class = '';
 			$trace = '';
 		}
 
 		$data = array(
-			'message'   => $message,
+			'message'   => $this->interpolate( $message, $context ),
 			'lgroup'    => isset( $context['_group'] ) ? substr( $context['_group'], 0, 20 ) : '',
 			'time'      => date( 'Y-m-d H:i:s' ),
 			'ip'        => inet_pton( $this->get_ip() ),
 			'exception' => $class,
-			'trace'     => $trace
+			'trace'     => $trace,
+			'context'   => wp_json_encode( $context )
 		);
 
 		$custom_columns = $this->table->get_columns();
@@ -135,7 +139,7 @@ class Logger extends AbstractLogger {
 		$replace = array();
 
 		foreach ( $context as $key => $val ) {
-			$replace[ '{' . $key . '}' ] = (string) $val;
+			$replace[ '{' . $key . '}' ] = $val;
 		}
 
 		// interpolate replacement values into the message and return
