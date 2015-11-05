@@ -24,4 +24,13 @@ class Test_Table extends \WP_UnitTestCase {
 
 		$this->assertEquals( 'my-slug', $table->get_slug() );
 	}
+
+	public function test_dashes_replaced_when_generating_table_name() {
+
+		$table = new Table( 'my-slug' );
+
+		$prefix = $GLOBALS['wpdb']->prefix;
+
+		$this->assertEquals( "{$prefix}my_slug", $table->get_table_name( $GLOBALS['wpdb'] ) );
+	}
 }
