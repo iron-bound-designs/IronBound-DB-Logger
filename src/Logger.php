@@ -71,7 +71,7 @@ class Logger extends AbstractLogger {
 			LogLevel::EMERGENCY,
 			LogLevel::ERROR,
 			LogLevel::INFO,
-			LogLevel::DEBUG,
+			LogLevel::NOTICE,
 			LogLevel::WARNING
 		) )
 		) {
@@ -95,10 +95,11 @@ class Logger extends AbstractLogger {
 		}
 
 		$data = array(
+			'level'     => $level,
 			'message'   => $this->interpolate( $message, $context ),
 			'lgroup'    => isset( $context['_group'] ) ? substr( $context['_group'], 0, 20 ) : '',
 			'time'      => date( 'Y-m-d H:i:s' ),
-			'ip'        => inet_pton( $this->get_ip() ),
+			'ip'        => ( $ip = $this->get_ip() ) ? inet_pton( $ip ) : false,
 			'exception' => $class,
 			'trace'     => $trace,
 			'context'   => wp_json_encode( $context )
@@ -139,11 +140,47 @@ class Logger extends AbstractLogger {
 		$replace = array();
 
 		foreach ( $context as $key => $val ) {
-			$replace[ '{' . $key . '}' ] = $val;
+			$replace[ '{' . $key . '}' ] = $this->convert_value_to_string( $val );
 		}
 
 		// interpolate replacement values into the message and return
 		return strtr( $message, $replace );
+	}
+
+	/**
+	 * Converts a value of unknown type to a string.
+	 *
+	 * @param mixed $value
+	 *
+	 * @return string
+	 */
+	protected function convert_value_to_string( $value ) {
+
+		if ( is_scalar( $value ) ) {
+			return $value;
+		}
+
+		if ( is_object( $value ) ) {
+
+			if ( method_exists( $value, '__toString' ) ) {
+				return (string) $value;
+			} else {
+
+				$class = get_class( $value );
+
+				return "($class)";
+			}
+		}
+
+		if ( is_array( $value ) ) {
+			return '(Array)';
+		}
+
+		if ( is_resource( $value ) ) {
+			return '(Resource)';
+		}
+
+		return '(Invalid)';
 	}
 
 	/**
@@ -162,6 +199,6 @@ class Logger extends AbstractLogger {
 				getenv( 'HTTP_X_FORWARDED' ) ?:
 					getenv( 'HTTP_FORWARDED_FOR' ) ?:
 						getenv( 'HTTP_FORWARDED' ) ?:
-							getenv( 'REMOTE_ADDR' );
+							getenv( 'REMOTE_ADDR' ) ?: false;
 	}
 }

@@ -31,6 +31,7 @@ class Test_Abstract_Table extends \WP_UnitTestCase {
 	public function _columns_provider() {
 		return array(
 			array( 'id' ),
+			array( 'level' ),
 			array( 'message' ),
 			array( 'lgroup' ),
 			array( 'time' ),
@@ -85,6 +86,7 @@ class Test_Abstract_Table extends \WP_UnitTestCase {
 	public function _column_types_provider() {
 		return array(
 			array( 'id', 'bigint(20)' ),
+			array( 'level', 'varchar(20)' ),
 			array( 'message', 'varchar(255)' ),
 			array( 'lgroup', 'varchar(20)' ),
 			array( 'time', 'datetime' ),

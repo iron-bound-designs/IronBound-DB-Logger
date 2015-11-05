@@ -31,6 +31,7 @@ abstract class AbstractTable implements Table {
 		return array(
 			'id'        => '%d',
 			'message'   => '%s',
+			'level'     => '%s',
 			'lgroup'    => '%s',
 			'time'      => '%s',
 			'user'      => '%d',
@@ -52,6 +53,7 @@ abstract class AbstractTable implements Table {
 		return array(
 			'id'        => '',
 			'message'   => '',
+			'level'     => '',
 			'lgroup'    => '',
 			'time'      => '',
 			'user'      => '',
@@ -101,6 +103,7 @@ abstract class AbstractTable implements Table {
 	protected function get_column_definitions() {
 		return "id BIGINT(20) NOT NULL AUTO_INCREMENT,
 		message VARCHAR (255),
+		level VARCHAR(20),
 		lgroup VARCHAR (20),
 		time DATETIME DEFAULT NULL,
 		user BIGINT(20),
