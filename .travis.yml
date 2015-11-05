@@ -18,7 +18,6 @@ matrix:
   - php: 7
 
 before_install:
-  - pip install codecov
   - composer self-update
   - composer install --no-interaction
   # set up WP install
