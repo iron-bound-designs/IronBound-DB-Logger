@@ -35,11 +35,11 @@ class Logger extends AbstractLogger {
 	 * Logger constructor.
 	 *
 	 * @param AbstractTable $table
-	 * @param \wpdb         $wpdb
+	 * @param Simple_Query  $query
 	 */
-	public function __construct( AbstractTable $table, \wpdb $wpdb ) {
+	public function __construct( AbstractTable $table, Simple_Query $query ) {
 		$this->table = $table;
-		$this->query = new Simple_Query( $wpdb, $table );
+		$this->query = $query;
 	}
 
 	/**
