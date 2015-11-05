@@ -176,31 +176,82 @@ class ListTable extends \WP_List_Table {
 			return;
 		}
 
+		$this->months_dropdown();
+
 		$selected = isset( $_GET['level'] ) ? $_GET['level'] : '';
 		?>
 
-		<div class="level-filter-container">
+		<label for="filter-by-level" class="screen-reader-text">
+			<?php echo $this->translations['levelFilterLabel']; ?>
+		</label>
 
-			<label for="filter-by-level" class="screen-reader-text">
-				<?php echo $this->translations['levelFilterLabel']; ?>
-			</label>
+		<select name="level" id="filter-by-level">
 
-			<select name="level" id="filter-by-level">
+			<option value=""><?php echo $this->translations['allLevels']; ?></option>
 
-				<option value=""><?php echo $this->translations['allLevels']; ?></option>
+			<?php foreach ( $this->get_levels() as $level => $label ): ?>
 
-				<?php foreach ( $this->get_levels() as $level => $label ): ?>
+				<option value="<?php echo esc_attr( $level ); ?>" <?php selected( $selected, $level ); ?>>
+					<?php echo $label; ?>
+				</option>
 
-					<option value="<?php echo esc_attr( $level ); ?>" <?php selected( $selected, $level ); ?>>
-						<?php echo $label; ?>
-					</option>
+			<?php endforeach; ?>
 
-				<?php endforeach; ?>
-
-			</select>
-		</div>
+		</select>
 
 		<?php submit_button( $this->translations['filter'], 'button', 'filter_action', false );
+	}
+
+	/**
+	 * Display a monthly dropdown for filtering items
+	 *
+	 * @since  3.1.0
+	 * @access protected
+	 *
+	 * @global \wpdb      $wpdb
+	 * @global \WP_Locale $wp_locale
+	 */
+	protected function months_dropdown() {
+		global $wpdb, $wp_locale;
+
+		$tn = $this->table->get_table_name( $wpdb );
+
+		$months = $wpdb->get_results( "
+			SELECT DISTINCT YEAR( time ) AS year, MONTH( time ) AS month
+			FROM $tn
+			ORDER BY time DESC
+		" );
+
+		$month_count = count( $months );
+
+		if ( ! $month_count || ( 1 == $month_count && 0 == $months[0]->month ) ) {
+			return;
+		}
+
+		$m = isset( $_GET['m'] ) ? (int) $_GET['m'] : 0;
+		?>
+		<label for="filter-by-date" class="screen-reader-text"><?php _e( 'Filter by date' ); ?></label>
+		<select name="m" id="filter-by-date">
+			<option<?php selected( $m, 0 ); ?> value="0"><?php _e( 'All dates' ); ?></option>
+			<?php
+			foreach ( $months as $arc_row ) {
+				if ( 0 == $arc_row->year ) {
+					continue;
+				}
+
+				$month = zeroise( $arc_row->month, 2 );
+				$year  = $arc_row->year;
+
+				printf( "<option %s value='%s'>%s</option>\n",
+					selected( $m, $year . $month, false ),
+					esc_attr( $arc_row->year . $month ),
+					/* translators: 1: month name, 2: 4-digit year */
+					sprintf( __( '%1$s %2$d' ), $wp_locale->get_month( $month ), $year )
+				);
+			}
+			?>
+		</select>
+		<?php
 	}
 
 	/**
@@ -246,6 +297,14 @@ class ListTable extends \WP_List_Table {
 
 		if ( ! empty( $_GET['level'] ) && array_key_exists( $_GET['level'], $this->get_levels() ) ) {
 			$args['level'] = $_GET['level'];
+		}
+
+		if ( ! empty( $_GET['m'] ) ) {
+
+			$args['time'] = array(
+				'month' => substr( $_GET['m'], 4, 2 ),
+				'year'  => substr( $_GET['m'], 0, 4 )
+			);
 		}
 
 		$query = new LogQuery( $this->table, $this->model_class, $args );
