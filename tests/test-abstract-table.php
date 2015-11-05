@@ -62,4 +62,38 @@ class Test_Abstract_Table extends \WP_UnitTestCase {
 		$this->assertTrue( $wpdb->query( $sql ) );
 	}
 
+	/**
+	 * @dataProvider _column_types_provider
+	 */
+	public function test_column_types( $column, $type ) {
+
+		/** @var \wpdb $wpdb */
+		global $wpdb;
+
+		$stub = $this->getMockForAbstractClass( 'IronBound\DBLogger\AbstractTable' );
+		$stub->expects( $this->any() )->method( 'get_table_name' )->willReturn( $wpdb->prefix . 'abstract_table' );
+		$wpdb->query( $stub->get_creation_sql( $wpdb ) );
+
+		// load the column meta
+		$wpdb->get_col_length( $wpdb->prefix . 'abstract_table', 'id' );
+		$types = $wpdb->col_meta[ $wpdb->prefix . 'abstract_table' ];
+
+		$this->assertArrayHasKey( $column, $types );
+		$this->assertEquals( $types[ $column ]->Type, $type );
+	}
+
+	public function _column_types_provider() {
+		return array(
+			array( 'id', 'bigint(20)' ),
+			array( 'message', 'varchar(255)' ),
+			array( 'lgroup', 'varchar(20)' ),
+			array( 'time', 'datetime' ),
+			array( 'user', 'bigint(20)' ),
+			array( 'ip', 'binary(16)' ),
+			array( 'exception', 'varchar(255)' ),
+			array( 'trace', 'longtext' ),
+			array( 'context', 'longtext' )
+		);
+	}
+
 }
