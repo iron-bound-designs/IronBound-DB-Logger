@@ -291,8 +291,8 @@ class ListTable extends \WP_List_Table {
 		$per_page = $this->get_items_per_page( get_current_screen()->id . '_per_page' );
 
 		$args = array(
-			'page'     => $page,
-			'per_page' => $per_page
+			'page'           => $page,
+			'items_per_page' => $per_page
 		);
 
 		if ( ! empty( $_GET['s'] ) ) {
