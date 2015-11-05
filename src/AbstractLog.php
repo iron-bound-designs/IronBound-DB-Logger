@@ -51,6 +51,11 @@ abstract class AbstractLog extends Model {
 	private $ip;
 
 	/**
+	 * @var \WP_User|null
+	 */
+	private $user;
+
+	/**
 	 * @var string
 	 */
 	private $exception;
@@ -89,6 +94,7 @@ abstract class AbstractLog extends Model {
 		$this->group     = $data->lgroup;
 		$this->time      = empty( $data->time ) ? null : new \DateTime( $data->time );
 		$this->ip        = empty( $data->ip ) ? '' : inet_ntop( $data->ip );
+		$this->user      = empty( $data->user ) ? null : get_user_by( 'id', $data->user );
 		$this->exception = $data->exception;
 		$this->trace     = $data->trace;
 		$this->context   = json_decode( $data->context );
@@ -141,6 +147,13 @@ abstract class AbstractLog extends Model {
 	}
 
 	/**
+	 * @return null|\WP_User
+	 */
+	public function get_user() {
+		return $this->user;
+	}
+
+	/**
 	 * @return string
 	 */
 	public function get_exception() {
@@ -159,5 +172,26 @@ abstract class AbstractLog extends Model {
 	 */
 	public function get_context() {
 		return $this->context;
+	}
+
+	/**
+	 * Get the data we'd like to cache.
+	 *
+	 * This is a bit magical. It iterates through all of the table columns,
+	 * and checks if a getter for that method exists. If so, it pulls in that
+	 * value. Otherwise, it will pull in the default value. If you'd like to
+	 * customize this you should override this function in your child model
+	 * class.
+	 *
+	 * @since 1.0
+	 *
+	 * @return array
+	 */
+	public function get_data_to_cache() {
+		$data = parent::get_data_to_cache();
+
+		$data['lgroup'] = $this->get_group();
+
+		return $data;
 	}
 }
