@@ -33,4 +33,11 @@ class Test_Table extends \WP_UnitTestCase {
 
 		$this->assertEquals( "{$prefix}my_slug", $table->get_table_name( $GLOBALS['wpdb'] ) );
 	}
+
+	public function test_initial_version() {
+
+		$table = new Table( 'my-slug' );
+
+		$this->assertEquals( 1, $table->get_version() );
+	}
 }

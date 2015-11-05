@@ -105,7 +105,7 @@ class Logger extends AbstractLogger {
 			'context'   => @wp_json_encode( $context )
 		);
 
-		$custom_columns = $this->table->get_columns();
+		$valid_columns = $this->table->get_columns();
 
 		foreach ( $context as $key => $value ) {
 
@@ -113,7 +113,7 @@ class Logger extends AbstractLogger {
 
 				$context_column_name = substr( $key, 1 );
 
-				if ( isset( $custom_columns[ $context_column_name ] ) ) {
+				if ( isset( $valid_columns[ $context_column_name ] ) ) {
 					$data[ $context_column_name ] = $value;
 				}
 			}
