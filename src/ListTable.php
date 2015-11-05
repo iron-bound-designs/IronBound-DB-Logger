@@ -70,6 +70,7 @@ class ListTable extends \WP_List_Table {
 	 * @return array
 	 */
 	public function get_columns() {
+
 		return array(
 			'message' => $this->translations['message'],
 			'level'   => $this->translations['level'],
@@ -118,9 +119,10 @@ class ListTable extends \WP_List_Table {
 	 * @param AbstractLog $item
 	 * @param string      $column_name
 	 */
-	protected function column_default( AbstractLog $item, $column_name ) {
+	protected function column_default( $item, $column_name ) {
+
 		if ( method_exists( $item, "get_{$column_name}" ) ) {
-			echo call_user_func( "get_{$column_name}", $item );
+			echo call_user_func( array( $item, "get_{$column_name}" ) );
 		} else {
 			echo '-';
 		}
@@ -176,7 +178,7 @@ class ListTable extends \WP_List_Table {
 			return;
 		}
 
-		$this->months_dropdown();
+		$this->months_dropdown( '' );
 
 		$selected = isset( $_GET['level'] ) ? $_GET['level'] : '';
 		?>
@@ -210,8 +212,10 @@ class ListTable extends \WP_List_Table {
 	 *
 	 * @global \wpdb      $wpdb
 	 * @global \WP_Locale $wp_locale
+	 *
+	 * @param string      $post_type
 	 */
-	protected function months_dropdown() {
+	protected function months_dropdown( $post_type ) {
 		global $wpdb, $wp_locale;
 
 		$tn = $this->table->get_table_name( $wpdb );
