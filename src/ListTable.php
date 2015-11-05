@@ -290,10 +290,21 @@ class ListTable extends \WP_List_Table {
 		$page     = $this->get_pagenum();
 		$per_page = $this->get_items_per_page( get_current_screen()->id . '_per_page' );
 
+		if ( ! isset( $_GET['orderby'] ) ) {
+			$_GET['orderby'] = 'time';
+			$_GET['order']   = 'desc';
+		}
+
 		$args = array(
 			'page'           => $page,
 			'items_per_page' => $per_page
 		);
+
+		if ( isset( $_GET['orderby'] ) ) {
+			$args['order'] = array(
+				$_GET['orderby'] => isset( $_GET['order'] ) ? $_GET['order'] : 'ASC'
+			);
+		}
 
 		if ( ! empty( $_GET['s'] ) ) {
 			$args['message'] = $_GET['s'];
