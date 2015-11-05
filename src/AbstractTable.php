@@ -86,7 +86,20 @@ abstract class AbstractTable implements Table {
 		$tn = $this->get_table_name( $wpdb );
 
 		return "CREATE TABLE {$tn} (
-		id BIGINT(20) NOT NULL AUTO_INCREMENT,
+		{$this->get_column_definitions()}
+		{$this->get_index_definitions()}
+		) {$wpdb->get_charset_collate()};";
+	}
+
+	/**
+	 * Get the column definitions.
+	 *
+	 * @since 1.0
+	 *
+	 * @return string
+	 */
+	protected function get_column_definitions() {
+		return "id BIGINT(20) NOT NULL AUTO_INCREMENT,
 		message VARCHAR (255),
 		lgroup VARCHAR (20),
 		time DATETIME DEFAULT NULL,
@@ -94,10 +107,19 @@ abstract class AbstractTable implements Table {
 		ip BINARY(16),
 		exception VARCHAR (255),
 		trace LONGTEXT,
-		context LONGTEXT,
-		PRIMARY KEY  (id),
+		context LONGTEXT,";
+	}
+
+	/**
+	 * Get the index definitions.
+	 *
+	 * @since 1.0
+	 *
+	 * @return string
+	 */
+	protected function get_index_definitions() {
+		return "PRIMARY KEY  (id),
 		KEY lgroup (lgroup),
-		KEY user (user)
-		) {$wpdb->get_charset_collate()};";
+		KEY user (user)";
 	}
 }
