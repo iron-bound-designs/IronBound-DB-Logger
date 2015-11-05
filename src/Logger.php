@@ -99,7 +99,7 @@ class Logger extends AbstractLogger {
 			'message'   => $this->interpolate( $message, $context ),
 			'lgroup'    => isset( $context['_group'] ) ? substr( $context['_group'], 0, 20 ) : '',
 			'time'      => date( 'Y-m-d H:i:s' ),
-			'ip'        => ( $ip = $this->get_ip() ) ? inet_pton( $ip ) : false,
+			'ip'        => ( $ip = $this->get_ip() ) ? inet_pton( $ip ) : null,
 			'exception' => $class,
 			'trace'     => $trace,
 			'context'   => @wp_json_encode( $context )

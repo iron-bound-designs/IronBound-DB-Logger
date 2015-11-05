@@ -93,7 +93,7 @@ abstract class AbstractLog extends Model {
 		$this->message   = $data->message;
 		$this->group     = $data->lgroup;
 		$this->time      = empty( $data->time ) ? null : new \DateTime( $data->time );
-		$this->ip        = ! (int) $data->ip ? '' : inet_ntop( $data->ip );
+		$this->ip        = inet_ntop( $data->ip );
 		$this->user      = empty( $data->user ) ? null : get_user_by( 'id', $data->user );
 		$this->exception = $data->exception;
 		$this->trace     = $data->trace;
