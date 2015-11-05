@@ -156,13 +156,11 @@ class Logger extends AbstractLogger {
 	 */
 	protected function convert_value_to_string( $value ) {
 
-		if ( is_scalar( $value ) ) {
-			return $value;
-		}
-
 		if ( is_object( $value ) ) {
 
-			if ( method_exists( $value, '__toString' ) ) {
+			if ( $value instanceof \DateTime || ( interface_exists( '\DateTimeInterface' ) && $value instanceof \DateTimeInterface ) ) {
+				return $value->format( \DateTime::ISO8601 );
+			} else if ( method_exists( $value, '__toString' ) ) {
 				return (string) $value;
 			} else {
 
@@ -177,7 +175,14 @@ class Logger extends AbstractLogger {
 		}
 
 		if ( is_resource( $value ) ) {
-			return '(Resource)';
+
+			$type = get_resource_type( $value );
+
+			return "(Resource:$type)";
+		}
+
+		if ( is_scalar( $value ) ) {
+			return $value;
 		}
 
 		return '(Invalid)';
