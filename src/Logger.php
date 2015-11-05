@@ -102,7 +102,7 @@ class Logger extends AbstractLogger {
 			'ip'        => ( $ip = $this->get_ip() ) ? inet_pton( $ip ) : false,
 			'exception' => $class,
 			'trace'     => $trace,
-			'context'   => wp_json_encode( $context )
+			'context'   => @wp_json_encode( $context )
 		);
 
 		$custom_columns = $this->table->get_columns();
