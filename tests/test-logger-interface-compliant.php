@@ -15,7 +15,6 @@ use IronBound\DB\Query\Simple_Query;
 use IronBound\DBLogger\Logger;
 use IronBound\DBLogger\Table;
 use Psr\Log\LoggerInterface;
-use Psr\Log\Test\DummyTest;
 use Psr\Log\Test\LoggerInterfaceTest;
 
 /**
@@ -113,22 +112,6 @@ class Test_Logger_Interface_Compliant extends LoggerInterfaceTest {
 		}
 
 		return $logs;
-	}
-
-	public function testContextCanContainAnything() {
-
-		$context = array(
-				'bool' => true,
-				'null' => null,
-				'string' => 'Foo',
-				'int' => 0,
-				'float' => 0.5,
-				'nested' => array('with object' => new DummyTest()),
-				'object' => new \DateTime,
-				//'resource' => fopen('php://memory', 'r'),
-		);
-
-		$this->getLogger()->warning('Crazy context data', $context);
 	}
 
 }

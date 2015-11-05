@@ -156,6 +156,13 @@ class Logger extends AbstractLogger {
 	 */
 	protected function convert_value_to_string( $value ) {
 
+		if ( gettype( $value ) === 'resource' ) {
+
+			$type = get_resource_type( $value );
+
+			return "(Resource:$type)";
+		}
+
 		if ( is_object( $value ) ) {
 
 			if ( $value instanceof \DateTime || ( interface_exists( '\DateTimeInterface' ) && $value instanceof \DateTimeInterface ) ) {
@@ -172,13 +179,6 @@ class Logger extends AbstractLogger {
 
 		if ( is_array( $value ) ) {
 			return '(Array)';
-		}
-
-		if ( is_resource( $value ) ) {
-
-			$type = get_resource_type( $value );
-
-			return "(Resource:$type)";
 		}
 
 		if ( is_scalar( $value ) ) {
