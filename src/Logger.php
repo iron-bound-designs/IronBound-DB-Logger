@@ -156,7 +156,7 @@ class Logger extends AbstractLogger {
 	 */
 	protected function convert_value_to_string( $value ) {
 
-		if ( gettype( $value ) === 'resource' ) {
+		if ( $this->is_resource( $value ) ) {
 
 			$type = get_resource_type( $value );
 
@@ -186,6 +186,19 @@ class Logger extends AbstractLogger {
 		}
 
 		return '(Invalid)';
+	}
+
+	/**
+	 * Check if a value is a resource.
+	 *
+	 * @since 1.0
+	 *
+	 * @param $maybe_resource
+	 *
+	 * @return bool
+	 */
+	function is_resource( $maybe_resource ) {
+		return ! is_null( @get_resource_type( $maybe_resource ) );
 	}
 
 	/**
