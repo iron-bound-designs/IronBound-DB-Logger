@@ -36,9 +36,10 @@ class LogQuery extends Complex_Query {
 	 * @param array         $args
 	 */
 	public function __construct( AbstractTable $table, $model_class, array $args ) {
-		parent::__construct( $table, $args );
 
 		$this->model_class = $model_class;
+
+		parent::__construct( $table, $args );
 	}
 
 	/**
