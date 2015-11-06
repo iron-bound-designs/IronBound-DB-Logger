@@ -219,4 +219,23 @@ class Logger extends AbstractLogger {
 						getenv( 'HTTP_FORWARDED' ) ?:
 							getenv( 'REMOTE_ADDR' ) ?: false;
 	}
+
+	/**
+	 * Purge all records older than 'n' days.
+	 *
+	 * @since 1.0
+	 *
+	 * @param int   $days_older_than
+	 * @param \wpdb $wpdb
+	 */
+	public function purge( $days_older_than = 60, \wpdb $wpdb ) {
+
+		$days_older_than = absint( $days_older_than );
+
+		$tn = $this->table->get_table_name( $wpdb );
+
+		$sql = "DELETE FROM {$tn} WHERE time < DATE_SUB(NOW(), INTERVAL $days_older_than DAY)";
+
+		$wpdb->query( $sql );
+	}
 }

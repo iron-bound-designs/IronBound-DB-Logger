@@ -10,6 +10,8 @@
 
 namespace IronBound\DBLogger\Tests;
 
+use IronBound\DB\Manager;
+use IronBound\DB\Query\Simple_Query;
 use IronBound\DBLogger\Logger;
 use Psr\Log\LogLevel;
 
@@ -219,14 +221,14 @@ class Test_Logger extends \WP_UnitTestCase {
 
 		$query = $this->getMockBuilder( '\IronBound\DB\Query\Simple_Query' )->disableOriginalConstructor()->getMock();
 		$query->expects( $this->once() )->method( 'insert' )->with( $this->logicalAnd(
-				new \PHPUnit_Framework_Constraint_ArraySubset( array(
-						'message' => 'Message (stdClass)'
-				) )
+			new \PHPUnit_Framework_Constraint_ArraySubset( array(
+				'message' => 'Message (stdClass)'
+			) )
 		) );
 
 		$log = new Logger( $table, $query );
 		$log->log( LogLevel::DEBUG, 'Message {context}', array(
-				'context' => new \stdClass()
+			'context' => new \stdClass()
 		) );
 	}
 
@@ -236,14 +238,50 @@ class Test_Logger extends \WP_UnitTestCase {
 
 		$query = $this->getMockBuilder( '\IronBound\DB\Query\Simple_Query' )->disableOriginalConstructor()->getMock();
 		$query->expects( $this->once() )->method( 'insert' )->with( $this->logicalAnd(
-				new \PHPUnit_Framework_Constraint_ArraySubset( array(
-						'message' => 'Message (Array)'
-				) )
+			new \PHPUnit_Framework_Constraint_ArraySubset( array(
+				'message' => 'Message (Array)'
+			) )
 		) );
 
 		$log = new Logger( $table, $query );
 		$log->log( LogLevel::DEBUG, 'Message {context}', array(
-				'context' => array()
+			'context' => array()
 		) );
+	}
+
+	public function test_purge() {
+
+		/** @var \wpdb $wpdb */
+		global $wpdb;
+
+		$table = $this->getMockBuilder( '\IronBound\DBLogger\AbstractTable' )
+		              ->setMethods( array( 'get_slug', 'get_table_name', 'get_version' ) )
+		              ->getMockForAbstractClass();
+		$table->method( 'get_slug' )->willReturn( 'test_logs' );
+		$table->method( 'get_table_name' )->willReturn( "{$wpdb->prefix}test_logs" );
+		$table->method( 'get_version' )->willReturn( 1 );
+
+		Manager::maybe_install_table( $table );
+
+		$tn = $table->get_table_name( $wpdb );
+
+		$wpdb->insert( $tn, array(
+			'message' => 'a',
+			'time'    => date( 'Y-m-d H:i:s', time() - WEEK_IN_SECONDS )
+		) );
+
+		$wpdb->insert( $tn, array(
+			'message' => 'b',
+			'time'    => date( 'Y-m-d H:i:s' )
+		) );
+
+		$logger = new Logger( $table, new Simple_Query( $wpdb, $table ) );
+		$logger->purge( 2, $wpdb );
+
+		$a = $wpdb->get_results( "SELECT * FROM $tn WHERE message = 'a'" );
+		$b = $wpdb->get_results( "SELECT * FROM $tn WHERE message = 'b'" );
+
+		$this->assertEmpty( $a );
+		$this->assertEquals( 1, count( $b ) );
 	}
 }
