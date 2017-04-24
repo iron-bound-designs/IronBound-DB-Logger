@@ -10,8 +10,11 @@
 
 namespace IronBound\DBLogger\Tests;
 
+use IronBound\DB\Table\Table;
+
 /**
  * Class Test_Abstract_Table
+ *
  * @package IronBound\DBLogger\Tests
  */
 class Test_Abstract_Table extends \WP_UnitTestCase {
@@ -61,6 +64,7 @@ class Test_Abstract_Table extends \WP_UnitTestCase {
 		$sql = $stub->get_creation_sql( $wpdb );
 
 		$this->assertTrue( $wpdb->query( $sql ) );
+		$wpdb->query( "DROP TABLE {$stub->get_table_name( $wpdb )}" );
 	}
 
 	/**
@@ -73,6 +77,7 @@ class Test_Abstract_Table extends \WP_UnitTestCase {
 
 		$stub = $this->getMockForAbstractClass( 'IronBound\DBLogger\AbstractTable' );
 		$stub->expects( $this->any() )->method( 'get_table_name' )->willReturn( $wpdb->prefix . 'abstract_table' );
+		/** @var $stub Table */
 		$wpdb->query( $stub->get_creation_sql( $wpdb ) );
 
 		// load the column meta
@@ -81,6 +86,8 @@ class Test_Abstract_Table extends \WP_UnitTestCase {
 
 		$this->assertArrayHasKey( $column, $types );
 		$this->assertEquals( $types[ $column ]->Type, $type );
+
+		$wpdb->query( "DROP TABLE {$stub->get_table_name( $wpdb )}" );
 	}
 
 	public function _column_types_provider() {
@@ -90,8 +97,8 @@ class Test_Abstract_Table extends \WP_UnitTestCase {
 			array( 'message', 'varchar(255)' ),
 			array( 'lgroup', 'varchar(20)' ),
 			array( 'time', 'datetime' ),
-			array( 'user', 'bigint(20)' ),
-			array( 'ip', 'binary(16)' ),
+			array( 'user', 'bigint(20) unsigned' ),
+			array( 'ip', 'varchar(45)' ),
 			array( 'exception', 'varchar(255)' ),
 			array( 'trace', 'longtext' ),
 			array( 'context', 'longtext' )
