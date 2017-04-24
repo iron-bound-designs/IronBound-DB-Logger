@@ -10,13 +10,18 @@
 
 namespace IronBound\DBLogger;
 
-use IronBound\DB\Table\Table;
+use IronBound\DB\Table\BaseTable;
+use IronBound\DB\Table\Column\DateTime;
+use IronBound\DB\Table\Column\ForeignUser;
+use IronBound\DB\Table\Column\IntegerBased;
+use IronBound\DB\Table\Column\StringBased;
 
 /**
  * Class AbstractTable
+ *
  * @package IronBound\DBLogger
  */
-abstract class AbstractTable implements Table {
+abstract class AbstractTable extends BaseTable {
 
 	/**
 	 * Columns in the table.
@@ -29,16 +34,16 @@ abstract class AbstractTable implements Table {
 	 */
 	public function get_columns() {
 		return array(
-			'id'        => '%d',
-			'message'   => '%s',
-			'level'     => '%s',
-			'lgroup'    => '%s',
-			'time'      => '%s',
-			'user'      => '%d',
-			'ip'        => '%d',
-			'exception' => '%s',
-			'trace'     => '%s',
-			'context'   => '%s'
+			'id'        => new IntegerBased( 'BIGINT', 'id', array( 'NOT NULL', 'auto_increment' ), array( 20 ) ),
+			'message'   => new StringBased( 'VARCHAR', 'message', array(), array( 255 ) ),
+			'level'     => new StringBased( 'VARCHAR', 'level', array(), array( 20 ) ),
+			'lgroup'    => new StringBased( 'VARCHAR', 'lgroup', array(), array( 20 ) ),
+			'time'      => new DateTime( 'time' ),
+			'user'      => new ForeignUser( 'user' ),
+			'ip'        => new StringBased( 'VARCHAR', 'ip', array(), array( 45 ) ),
+			'exception' => new StringBased( 'VARCHAR', 'exception', array(), array( 255 ) ),
+			'trace'     => new StringBased( 'LONGTEXT', 'trace' ),
+			'context'   => new StringBased( 'LONGTEXT', 'context' ),
 		);
 	}
 
@@ -76,53 +81,14 @@ abstract class AbstractTable implements Table {
 	}
 
 	/**
-	 * Get creation SQL.
-	 *
-	 * @since 1.0
-	 *
-	 * @param \wpdb $wpdb
-	 *
-	 * @return string
+	 * @inheritDoc
 	 */
-	public function get_creation_sql( \wpdb $wpdb ) {
-		$tn = $this->get_table_name( $wpdb );
+	protected function get_keys() {
+		$keys = parent::get_keys();
 
-		return "CREATE TABLE {$tn} (
-		{$this->get_column_definitions()}
-		{$this->get_index_definitions()}
-		) {$wpdb->get_charset_collate()};";
-	}
+		$keys[] = 'KEY lgroup (lgroup)';
+		$keys[] = 'KEY user (user)';
 
-	/**
-	 * Get the column definitions.
-	 *
-	 * @since 1.0
-	 *
-	 * @return string
-	 */
-	protected function get_column_definitions() {
-		return "id BIGINT(20) NOT NULL AUTO_INCREMENT,
-		message VARCHAR (255),
-		level VARCHAR(20),
-		lgroup VARCHAR (20),
-		time DATETIME DEFAULT NULL,
-		user BIGINT(20),
-		ip BINARY(16),
-		exception VARCHAR (255),
-		trace LONGTEXT,
-		context LONGTEXT,";
-	}
-
-	/**
-	 * Get the index definitions.
-	 *
-	 * @since 1.0
-	 *
-	 * @return string
-	 */
-	protected function get_index_definitions() {
-		return "PRIMARY KEY  (id),
-		KEY lgroup (lgroup),
-		KEY user (user)";
+		return $keys;
 	}
 }

@@ -14,91 +14,23 @@ use IronBound\DB\Model;
 
 /**
  * Class Log
+ *
  * @package IronBound\DBLogger
  *
  * This must be extended for each log type, and override the get_table() method.
+ *
+ * @property int           $id
+ * @property string        $level
+ * @property string        $message
+ * @property string        $group
+ * @property \DateTime     $time
+ * @property string        $ip
+ * @property \WP_User|null $user
+ * @property string        $exception
+ * @property string        $trace
+ * @property array         $context
  */
 abstract class AbstractLog extends Model {
-
-	/**
-	 * @var int
-	 */
-	private $id;
-
-	/**
-	 * @var string
-	 */
-	private $level;
-
-	/**
-	 * @var string
-	 */
-	private $message;
-
-	/**
-	 * @var string
-	 */
-	private $group;
-
-	/**
-	 * @var \DateTime|null
-	 */
-	private $time;
-
-	/**
-	 * @var string
-	 */
-	private $ip;
-
-	/**
-	 * @var \WP_User|null
-	 */
-	private $user;
-
-	/**
-	 * @var string
-	 */
-	private $exception;
-
-	/**
-	 * @var string
-	 */
-	private $trace;
-
-	/**
-	 * @var array
-	 */
-	private $context;
-
-	/**
-	 * Log constructor.
-	 *
-	 * @param \stdClass $data
-	 */
-	public function __construct( \stdClass $data ) {
-		$this->init( $data );
-	}
-
-	/**
-	 * Init an object.
-	 *
-	 * @since 1.0
-	 *
-	 * @param \stdClass $data
-	 */
-	protected function init( \stdClass $data ) {
-
-		$this->id        = $data->id;
-		$this->level     = $data->level;
-		$this->message   = $data->message;
-		$this->group     = $data->lgroup;
-		$this->time      = empty( $data->time ) ? null : new \DateTime( $data->time );
-		$this->ip        = inet_ntop( $data->ip );
-		$this->user      = empty( $data->user ) ? null : get_user_by( 'id', $data->user );
-		$this->exception = $data->exception;
-		$this->trace     = $data->trace;
-		$this->context   = json_decode( $data->context );
-	}
 
 	/**
 	 * Get the unique pk for this record.
