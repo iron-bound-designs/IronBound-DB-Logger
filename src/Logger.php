@@ -166,7 +166,7 @@ class Logger extends AbstractLogger {
 		if ( is_object( $value ) ) {
 
 			if ( $value instanceof \DateTime || ( interface_exists( '\DateTimeInterface' ) && $value instanceof \DateTimeInterface ) ) {
-				return $value->format( \DateTime::ISO8601 );
+				return $value->format( \DateTime::ATOM );
 			} else if ( method_exists( $value, '__toString' ) ) {
 				return (string) $value;
 			} else {
