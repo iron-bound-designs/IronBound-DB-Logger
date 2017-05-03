@@ -78,7 +78,8 @@ class Logger extends AbstractLogger {
 			throw new InvalidArgumentException( sprintf( "Invalid log level '%s'", $level ) );
 		}
 
-		$message = (string) $message;
+		$message      = (string) $message;
+		$interpolated = $this->interpolate( $message, $context );
 
 		if ( isset( $context['exception'] ) && $context['exception'] instanceof \Exception ) {
 
@@ -96,7 +97,7 @@ class Logger extends AbstractLogger {
 
 		$data = array(
 			'level'     => $level,
-			'message'   => $this->interpolate( $message, $context ),
+			'message'   => $interpolated,
 			'lgroup'    => isset( $context['_group'] ) ? substr( $context['_group'], 0, 20 ) : '',
 			'time'      => date( 'Y-m-d H:i:s' ),
 			'ip'        => $this->get_ip(),
@@ -165,9 +166,11 @@ class Logger extends AbstractLogger {
 
 		if ( is_object( $value ) ) {
 
-			if ( $value instanceof \DateTime || ( interface_exists( '\DateTimeInterface' ) && $value instanceof \DateTimeInterface ) ) {
+			if ( $value instanceof \Exception || $value instanceof \Throwable ) {
+				return '(' . get_class( $value ) . "#{$value->getCode()}:{$value->getMessage()})";
+			} elseif ( $value instanceof \DateTime || ( interface_exists( '\DateTimeInterface' ) && $value instanceof \DateTimeInterface ) ) {
 				return $value->format( \DateTime::ATOM );
-			} else if ( method_exists( $value, '__toString' ) ) {
+			} elseif ( method_exists( $value, '__toString' ) ) {
 				return (string) $value;
 			} else {
 
