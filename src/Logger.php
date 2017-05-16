@@ -188,6 +188,10 @@ class Logger extends AbstractLogger {
 			return $value;
 		}
 
+		if ( $value === null ) {
+			return '(Null)';
+		}
+
 		return '(Invalid)';
 	}
 
@@ -200,8 +204,8 @@ class Logger extends AbstractLogger {
 	 *
 	 * @return bool
 	 */
-	function is_resource( $maybe_resource ) {
-		return ! is_null( @get_resource_type( $maybe_resource ) );
+	protected function is_resource( $maybe_resource ) {
+		return null !== @get_resource_type( $maybe_resource );
 	}
 
 	/**
